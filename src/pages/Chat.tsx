@@ -1,27 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { io, Socket } from 'socket.io-client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  Smile, 
-  Paperclip, 
-  Send, 
-  X, 
-  Users, 
-  Plus,
-  Film
-} from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import EmojiPicker from '@/components/chat/EmojiPicker';
 import GifPicker from '@/components/chat/GifPicker';
 import MessageList from '@/components/chat/MessageList';
 import UsersList from '@/components/chat/UsersList';
 import ServerControls from '@/components/chat/ServerControls';
+import '../App.css';
 
 interface Message {
   msg_id: string;
@@ -230,7 +216,7 @@ const Chat = () => {
 
   if (!currentServer) {
     return (
-      <div className="min-h-screen bg-gradient-bg flex items-center justify-center p-4">
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
         <ServerControls 
           onCreateServer={createServer}
           onJoinServer={joinServer}
@@ -240,133 +226,112 @@ const Chat = () => {
   }
 
   return (
-    <div className="h-screen bg-chat-bg flex">
-      {/* Sidebar - Users Online */}
-      <div className="w-64 bg-sidebar-bg text-white flex flex-col shadow-card">
-        <div className="p-4 border-b border-sidebar-accent">
-          <div className="flex items-center gap-2">
-            <Users size={20} />
-            <h2 className="font-semibold">Users Online</h2>
-          </div>
-          <Badge variant="secondary" className="mt-2">
-            {onlineUsers.length} online
-          </Badge>
-        </div>
+    <div className="main-container">
+      <aside className="sidebar">
+        <h2>Users Online</h2>
         <UsersList users={onlineUsers} />
-      </div>
-
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Chat Header */}
-        <div className="bg-gradient-primary text-white p-4 shadow-sm">
-          <h1 className="text-xl font-semibold">{currentServer.name}</h1>
-          <p className="text-sm opacity-90">Server ID: {currentServer.id}</p>
+      </aside>
+      
+      <section className="chat-section">
+        <div className="server-header">
+          <span>{currentServer.name}</span>
+          <span> ({currentServer.id})</span>
         </div>
-
-        {/* Messages Area */}
-        <ScrollArea className="flex-1 p-4">
+        
+        <div className="chat-window">
           <MessageList 
             messages={messages} 
             onReply={handleReply}
             currentUsername={username}
           />
           <div ref={messagesEndRef} />
-        </ScrollArea>
+        </div>
 
-        {/* Reply Indicator */}
         {replyingTo && (
-          <div className="px-4 py-2 bg-muted border-l-4 border-primary flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">
-              ↪ Replying to: {replyingTo.preview}
-            </span>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+          <div className="reply-to" style={{ margin: '0 15px', padding: '8px' }}>
+            ↪ Replying to: {replyingTo.preview}
+            <button 
               onClick={clearReply}
-              className="h-6 w-6 p-0"
+              style={{ 
+                marginLeft: '10px', 
+                background: '#f44336', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '4px', 
+                padding: '2px 6px',
+                cursor: 'pointer'
+              }}
             >
-              <X size={14} />
-            </Button>
+              ✕
+            </button>
           </div>
         )}
 
-        {/* Message Input */}
-        <div className="border-t bg-card p-4">
-          <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-            <div className="flex-1 relative">
-              <Input
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                placeholder={replyingTo ? `Replying to: ${replyingTo.preview}` : "Type your message..."}
-                maxLength={1000}
-                className="pr-4"
-              />
-            </div>
-            
-            {/* File Upload */}
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-            <Button
+        <form id="messageForm" onSubmit={handleSendMessage}>
+          <input
+            type="text"
+            id="messageInput"
+            value={messageInput}
+            onChange={(e) => setMessageInput(e.target.value)}
+            placeholder={replyingTo ? `Replying to: ${replyingTo.preview}` : "Type your message..."}
+            maxLength={1000}
+            required
+          />
+          
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            style={{ display: 'none' }}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            📎
+          </button>
+
+          <div style={{ position: 'relative' }}>
+            <button
               type="button"
-              variant="outline"
-              size="icon"
-              onClick={() => fileInputRef.current?.click()}
+              id="emojiBtn"
+              onClick={() => {
+                setShowEmojiPicker(!showEmojiPicker);
+                setShowGifPicker(false);
+              }}
             >
-              <Paperclip size={18} />
-            </Button>
+              😊
+            </button>
+            {showEmojiPicker && (
+              <EmojiPicker
+                onEmojiSelect={handleEmojiSelect}
+                onClose={() => setShowEmojiPicker(false)}
+              />
+            )}
+          </div>
 
-            {/* Emoji Picker */}
-            <div className="relative">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => {
-                  setShowEmojiPicker(!showEmojiPicker);
-                  setShowGifPicker(false);
-                }}
-              >
-                <Smile size={18} />
-              </Button>
-              {showEmojiPicker && (
-                <EmojiPicker
-                  onEmojiSelect={handleEmojiSelect}
-                  onClose={() => setShowEmojiPicker(false)}
-                />
-              )}
-            </div>
+          <div style={{ position: 'relative' }}>
+            <button
+              type="button"
+              id="gifBtn"
+              onClick={() => {
+                setShowGifPicker(!showGifPicker);
+                setShowEmojiPicker(false);
+              }}
+            >
+              🎬
+            </button>
+            {showGifPicker && (
+              <GifPicker
+                onGifSelect={handleGifSelect}
+                onClose={() => setShowGifPicker(false)}
+              />
+            )}
+          </div>
 
-            {/* GIF Picker */}
-            <div className="relative">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={() => {
-                  setShowGifPicker(!showGifPicker);
-                  setShowEmojiPicker(false);
-                }}
-              >
-                <Film size={18} />
-              </Button>
-              {showGifPicker && (
-                <GifPicker
-                  onGifSelect={handleGifSelect}
-                  onClose={() => setShowGifPicker(false)}
-                />
-              )}
-            </div>
-
-            <Button type="submit" className="bg-gradient-primary hover:shadow-glow">
-              <Send size={18} />
-            </Button>
-          </form>
-        </div>
-      </div>
+          <button type="submit">Send</button>
+        </form>
+      </section>
     </div>
   );
 };

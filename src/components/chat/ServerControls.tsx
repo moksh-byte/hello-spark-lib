@@ -1,9 +1,5 @@
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Plus, LogIn, Server } from 'lucide-react';
+import '../../../App.css';
 
 interface ServerControlsProps {
   onCreateServer: (serverName: string) => void;
@@ -33,81 +29,93 @@ const ServerControls = ({ onCreateServer, onJoinServer }: ServerControlsProps) =
   };
 
   return (
-    <Card className="w-full max-w-md shadow-glow border-0">
-      <CardHeader className="text-center space-y-2">
-        <div className="w-16 h-16 bg-gradient-primary rounded-full flex items-center justify-center mx-auto">
-          <Server className="w-8 h-8 text-white" />
-        </div>
-        <CardTitle className="text-2xl font-bold">
-          Join the Conversation
-        </CardTitle>
-        <p className="text-muted-foreground">
-          Create a new server or join an existing one
-        </p>
-      </CardHeader>
+    <div style={{ 
+      width: '350px', 
+      margin: '0 auto', 
+      background: 'white', 
+      padding: '2.5em', 
+      borderRadius: '12px', 
+      boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+      textAlign: 'center'
+    }}>
+      <h1 style={{ color: '#333', marginBottom: '1.5em', fontSize: '2em' }}>
+        Join the Conversation
+      </h1>
       
-      <CardContent className="space-y-6">
-        {/* Create Server Section */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <Plus className="w-4 h-4 text-primary" />
-            <h3 className="font-semibold">Create New Server</h3>
-          </div>
-          
-          <form onSubmit={handleCreateServer} className="space-y-3">
-            <Input
-              value={serverName}
-              onChange={(e) => setServerName(e.target.value)}
-              placeholder="Enter server name"
-              required
-            />
-            <Button 
-              type="submit" 
-              className="w-full bg-gradient-primary hover:shadow-glow transition-all duration-300"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Create Server
-            </Button>
-          </form>
-        </div>
+      <div style={{ marginBottom: '2em' }}>
+        <h3 style={{ marginBottom: '1em', color: '#667eea' }}>Create New Server</h3>
+        <form onSubmit={handleCreateServer}>
+          <input
+            type="text"
+            value={serverName}
+            onChange={(e) => setServerName(e.target.value)}
+            placeholder="Enter server name"
+            required
+            style={{ 
+              width: '100%', 
+              padding: '12px', 
+              border: '2px solid #e0e0e0', 
+              borderRadius: '8px', 
+              fontSize: '16px', 
+              marginBottom: '1em',
+              boxSizing: 'border-box'
+            }}
+          />
+          <button type="submit" style={{ width: '100%', marginBottom: '1em' }}>
+            Create Server
+          </button>
+        </form>
+      </div>
 
-        <div className="relative">
-          <Separator />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="bg-card px-3 text-sm text-muted-foreground">
-              OR
-            </span>
-          </div>
+      <div style={{ 
+        margin: '2em 0', 
+        textAlign: 'center', 
+        color: '#999',
+        position: 'relative'
+      }}>
+        <div style={{ 
+          borderTop: '1px solid #e0e0e0', 
+          position: 'relative' 
+        }}>
+          <span style={{ 
+            background: 'white', 
+            padding: '0 1em', 
+            position: 'absolute', 
+            top: '-0.5em', 
+            left: '50%', 
+            transform: 'translateX(-50%)' 
+          }}>
+            OR
+          </span>
         </div>
+      </div>
 
-        {/* Join Server Section */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <LogIn className="w-4 h-4 text-secondary" />
-            <h3 className="font-semibold">Join Existing Server</h3>
-          </div>
-          
-          <form onSubmit={handleJoinServer} className="space-y-3">
-            <Input
-              value={joinCode}
-              onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-              placeholder="Enter 6-character join code"
-              maxLength={6}
-              pattern="[A-Za-z0-9]{6}"
-              required
-            />
-            <Button 
-              type="submit" 
-              variant="secondary"
-              className="w-full hover:shadow-sm transition-all duration-300"
-            >
-              <LogIn className="w-4 h-4 mr-2" />
-              Join Server
-            </Button>
-          </form>
-        </div>
-      </CardContent>
-    </Card>
+      <div>
+        <h3 style={{ marginBottom: '1em', color: '#764ba2' }}>Join Existing Server</h3>
+        <form onSubmit={handleJoinServer}>
+          <input
+            type="text"
+            value={joinCode}
+            onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+            placeholder="Enter 6-character join code"
+            maxLength={6}
+            required
+            style={{ 
+              width: '100%', 
+              padding: '12px', 
+              border: '2px solid #e0e0e0', 
+              borderRadius: '8px', 
+              fontSize: '16px', 
+              marginBottom: '1em',
+              boxSizing: 'border-box'
+            }}
+          />
+          <button type="submit" style={{ width: '100%' }}>
+            Join Server
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

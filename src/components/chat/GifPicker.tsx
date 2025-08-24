@@ -1,9 +1,5 @@
 import { useState } from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search } from 'lucide-react';
+import '../../../App.css';
 
 interface Gif {
   id: string;
@@ -60,54 +56,91 @@ const GifPicker = ({ onGifSelect, onClose }: GifPickerProps) => {
   };
 
   return (
-    <Card className="absolute bottom-12 right-0 w-96 h-96 shadow-card z-50">
-      <CardHeader className="p-3 border-b">
-        <div className="flex gap-2">
-          <Input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Search GIFs..."
-            className="flex-1"
-          />
-          <Button onClick={searchGifs} size="icon" disabled={loading}>
-            <Search size={16} />
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="p-0">
-        <ScrollArea className="h-80">
-          {loading ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-sm text-muted-foreground">Searching...</div>
-            </div>
-          ) : gifs.length === 0 ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-sm text-muted-foreground">
-                {searchQuery ? 'No GIFs found' : 'Search for GIFs above'}
+    <div 
+      id="gifPicker"
+      style={{
+        display: 'block',
+        position: 'absolute',
+        bottom: '60px',
+        right: '0px',
+        width: '420px',
+        maxHeight: '320px',
+        backgroundColor: '#2b2d31',
+        borderRadius: '8px',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
+        zIndex: 1000,
+        overflow: 'hidden'
+      }}
+    >
+      <div style={{ padding: '15px', borderBottom: '1px solid #eee' }}>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder="Search GIFs..."
+          style={{ 
+            width: '100%', 
+            padding: '8px', 
+            border: '1px solid #ccc', 
+            borderRadius: '4px',
+            marginBottom: '8px'
+          }}
+        />
+        <button 
+          onClick={searchGifs}
+          disabled={loading}
+          style={{ 
+            padding: '6px 12px', 
+            background: '#667eea', 
+            color: 'white', 
+            border: 'none', 
+            borderRadius: '4px', 
+            cursor: 'pointer' 
+          }}
+        >
+          {loading ? 'Searching...' : 'Search'}
+        </button>
+      </div>
+      
+      <div style={{ padding: '10px', maxHeight: '250px', overflowY: 'auto' }}>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '2em' }}>Searching...</div>
+        ) : gifs.length > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '5px' }}>
+            {gifs.map((gif) => (
+              <div
+                key={gif.id}
+                style={{
+                  cursor: 'pointer',
+                  borderRadius: '4px',
+                  overflow: 'hidden',
+                  transition: 'transform 0.2s'
+                }}
+                onClick={() => handleGifClick(gif)}
+                onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                <img
+                  src={gif.images.fixed_height_small.url}
+                  alt={gif.title}
+                  style={{ width: '120px', height: '90px', objectFit: 'cover', display: 'block' }}
+                  loading="lazy"
+                />
               </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-3 gap-1 p-2">
-              {gifs.map((gif) => (
-                <div
-                  key={gif.id}
-                  className="cursor-pointer rounded overflow-hidden hover:scale-105 transition-transform"
-                  onClick={() => handleGifClick(gif)}
-                >
-                  <img
-                    src={gif.images.fixed_height_small.url}
-                    alt={gif.title}
-                    className="w-full h-20 object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </ScrollArea>
-      </CardContent>
-    </Card>
+            ))}
+          </div>
+        ) : searchQuery ? (
+          <div style={{ textAlign: 'center', color: '#666', padding: '2em' }}>
+            No GIFs found for "{searchQuery}"
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', color: '#666', padding: '2em' }}>
+            Search for GIFs to get started
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

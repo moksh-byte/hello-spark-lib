@@ -1,5 +1,4 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import '../../../App.css';
 
 interface EmojiPickerProps {
   onEmojiSelect: (emoji: string) => void;
@@ -21,23 +20,47 @@ const EmojiPicker = ({ onEmojiSelect, onClose }: EmojiPickerProps) => {
   ];
 
   return (
-    <Card className="absolute bottom-12 right-0 w-80 shadow-card z-50">
-      <CardContent className="p-3">
-        <div className="grid grid-cols-10 gap-1">
-          {emojis.map((emoji, index) => (
-            <Button
-              key={index}
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0 text-lg hover:bg-muted"
-              onClick={() => onEmojiSelect(emoji)}
-            >
-              {emoji}
-            </Button>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+    <div 
+      id="emojiPicker" 
+      style={{
+        display: 'block',
+        position: 'absolute',
+        bottom: '60px',
+        right: '0px',
+        background: 'white',
+        border: '1px solid #ccc',
+        borderRadius: '8px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+        zIndex: 1000,
+        padding: '10px',
+        maxWidth: '320px'
+      }}
+    >
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(10, 1fr)',
+        gap: '5px'
+      }}>
+        {emojis.map((emoji, index) => (
+          <button
+            key={index}
+            style={{
+              border: 'none',
+              background: 'none',
+              fontSize: '20px',
+              cursor: 'pointer',
+              padding: '5px',
+              borderRadius: '4px'
+            }}
+            onClick={() => onEmojiSelect(emoji)}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
+            {emoji}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 };
 
